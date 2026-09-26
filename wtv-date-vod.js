@@ -180,11 +180,10 @@
         if (requestedChannels.has(key)) return;
         requestedChannels.add(key);
         gmGetJson(PROFILES_API + '/profiles/by-nickname/' + encodeURIComponent(key) + QS)
-        .then(p => {
-            const id = p && p.profile && p.profile.userId;
-            if (!id || !UUID_RE.test(id)) throw new Error('bad userId');
-            return gmGetJson(API + '/channels/' + encodeURIComponent(id) + '/streams' + QS);
-        })
+            .then(p => {
+                const id = p && p.profile && p.profile.userId;
+                if (!id || !UUID_RE.test(id)) throw new Error('bad userId');
+                return gmGetJson(API + '/channels/' + encodeURIComponent(id) + '/streams' + QS);
             })
             .then(harvest)
             .catch(() => {});
