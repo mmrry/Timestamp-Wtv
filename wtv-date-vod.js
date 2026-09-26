@@ -247,7 +247,7 @@
 
             const info = timesById.get(id);
             const ts = getTs(info);
-            if (!ts) { (nick); return; }
+            if (!ts) { fetchChannel(nick); return; }
 
             const text = fmt(ts);
             const tip = getTooltip(info);
