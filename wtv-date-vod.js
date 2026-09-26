@@ -37,6 +37,17 @@
 
     const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const VIDEO_HREF_RE = /\/([^\/?#]+)\/videos\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i;
+    
+    // Разбирает только same-origin ссылки вида /<nick>/videos/<uuid>
+    function parseVideoHref(a) {
+        try {
+            const u = new URL(a.getAttribute('href') || '', location.origin);
+            if (u.origin !== location.origin) return null;
+            return u.pathname.match(/^\/([^\/]+)\/videos\/([0-9a-f-]{36})\/?$/i);
+        } catch (e) {
+            return null;
+        }
+    }
 
     // streamId -> { startedAt, finishedAt } (в мс)
     const timesById = new Map();
@@ -169,10 +180,11 @@
         if (requestedChannels.has(key)) return;
         requestedChannels.add(key);
         gmGetJson(PROFILES_API + '/profiles/by-nickname/' + encodeURIComponent(key) + QS)
-            .then(p => {
-                const id = p && p.profile && p.profile.userId;
-                if (!id) throw new Error('no userId');
-                return gmGetJson(API + '/channels/' + id + '/streams' + QS);
+        .then(p => {
+            const id = p && p.profile && p.profile.userId;
+            if (!id || !UUID_RE.test(id)) throw new Error('bad userId');
+            return gmGetJson(API + '/channels/' + encodeURIComponent(id) + '/streams' + QS);
+        })
             })
             .then(harvest)
             .catch(() => {});
@@ -229,14 +241,14 @@
     // На карточках даты нет вообще — добавляем бейдж в левый нижний угол превью.
     function decoratePreviews() {
         document.querySelectorAll('a[href*="/videos/"]').forEach(a => {
-            const hm = (a.getAttribute('href') || '').match(VIDEO_HREF_RE);
+            const hm = parseVideoHref(a);
             if (!hm) return;
             const nick = hm[1];
             const id = hm[2].toLowerCase();
 
             const info = timesById.get(id);
             const ts = getTs(info);
-            if (!ts) { fetchChannel(nick); return; }
+            if (!ts) { (nick); return; }
 
             const text = fmt(ts);
             const tip = getTooltip(info);
@@ -266,7 +278,7 @@
             const root = header && header.parentElement;
             if (!rel || !root) return;
             const a = root.querySelector('a[href*="/videos/"]');
-            const hm = a && (a.getAttribute('href') || '').match(VIDEO_HREF_RE);
+            const hm = a && parseVideoHref(a);
             if (!hm) return;
             const info = timesById.get(hm[2].toLowerCase());
             const ts = getTs(info);
