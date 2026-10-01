@@ -10,6 +10,7 @@
 // @connect      streams-search-service.w.tv
 // @connect      profiles-service.w.tv
 // @run-at       document-start
+// @license MIT
 // ==/UserScript==
 
 (function () {
