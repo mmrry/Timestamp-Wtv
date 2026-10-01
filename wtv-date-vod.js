@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         W.tv — точное время VOD
 // @namespace    wtv-vod-exact-time
-// @version      1.0.0
+// @version      1.0.1
 // @description  Показывает точную дату и время (ДД.ММ.ГГГГ ЧЧ:ММ:СС) начала стрима для VOD на w.tv
 // @author       Aaa
 // @match        https://w.tv/*
