@@ -36,7 +36,6 @@
     const QS = '?user_lang=ru&platform=web';
 
     const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    const VIDEO_HREF_RE = /\/([^\/?#]+)\/videos\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i;
     
     // Разбирает только same-origin ссылки вида /<nick>/videos/<uuid>
     function parseVideoHref(a) {
